@@ -12,7 +12,7 @@ uint32_t *color_buffer = NULL;
 int window_width = 800;
 int window_height = 600;
 
-void set_color(int row, int col, uint32_t color)
+void set_color(int col, int row, uint32_t color)
 {
     color_buffer[(window_width * row) + col] = color;
 }
@@ -24,6 +24,12 @@ bool initialize_window(void)
         fprintf(stderr, "Error Initializing SDL\n");
         return false;
     }
+
+    SDL_DisplayMode display_mode;
+    SDL_GetCurrentDisplayMode(0, &display_mode);
+    window_width = display_mode.w;
+    window_height = display_mode.h;
+
     window = SDL_CreateWindow(
         NULL,
         SDL_WINDOWPOS_CENTERED,
@@ -44,7 +50,7 @@ bool initialize_window(void)
         fprintf(stderr, "Error creating renderer\n");
         return false;
     }
-
+    SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     return true;
 }
 void setup(void)
@@ -67,7 +73,30 @@ void clear_color_buffer(uint32_t color)
     {
         for (int x = 0; x < window_width; x++)
         {
-            set_color(y, x, color);
+            set_color(x, y, color);
+        }
+    }
+}
+
+void draw_grid(void)
+{
+    for (int y = 0; y < window_height; y++)
+    {
+        for (int x = 0; x < window_width; x++)
+        {
+            if (x % 10 == 0 || y % 10 == 0)
+                set_color(x, y, 0xFFFFFFFF);
+        }
+    }
+}
+
+void draw_rect(int x, int y, int w, int h, uint32_t color)
+{
+    for (int yy = y; yy <=y+h; yy++)
+    {
+        for (int xx = x; xx <= x+w; xx++)
+        {
+            set_color(xx, yy, color);
         }
     }
 }
@@ -96,8 +125,10 @@ void render(void)
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
+    // draw_grid();
+    draw_rect(50, 50, 500, 100, 0xFFFF0000);
     render_color_buffer();
-    clear_color_buffer(0xFFFFFF00);
+    clear_color_buffer(0xFF0000FF);
     SDL_RenderPresent(renderer);
 }
 
