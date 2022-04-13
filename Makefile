@@ -1,6 +1,7 @@
 build:
-	clang -Wall -std=c99 src/*.c  -I/opt/homebrew/include -L/opt/homebrew/lib -lSDL2 -o renderer
+	mkdir dist
+	clang -Wall -std=c99 src/*.c  -I/opt/homebrew/include -L/opt/homebrew/lib -lSDL2 -o ./dist/renderer
 run:
-	./renderer
+	./dist/renderer
 clean:
-	rm renderer
+	rm -rf ./dist
