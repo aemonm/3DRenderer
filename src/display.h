@@ -14,11 +14,11 @@ extern SDL_Renderer *renderer;
 extern SDL_Texture *color_buffer_texture;
 extern uint32_t *color_buffer;
 
-void set_color(int col, int row, uint32_t color);
-
 bool initialize_window(void);
 
 void draw_grid(void);
+
+void draw_pixel(int x, int y, uint32_t color);
 
 void draw_rect(int x, int y, int w, int h, uint32_t color);
 
