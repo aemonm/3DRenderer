@@ -22,11 +22,11 @@ void setup(void)
     color_buffer_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, window_width, window_height);
 
     int point_count = 0;
-    for (float x = -1; x < 1; x += .25)
+    for (float x = -1; x <= 1; x += .25)
     {
-        for (float y = -1; y < 1; y += .25)
+        for (float y = -1; y <= 1; y += .25)
         {
-            for (float z = -1; z < 1; z += .25)
+            for (float z = -1; z <= 1; z += .25)
             {
                 vect3_t new_point = {.x = x, .y = y, .z = z};
                 cube_points[point_count++] = new_point;
