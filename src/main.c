@@ -6,6 +6,7 @@
 #include "vector.h"
 
 bool is_running = false;
+int previous_frame_time = 0;
 
 const int N_POINTS = 9 * 9 * 9;
 vect3_t cube_points[N_POINTS];
@@ -63,7 +64,12 @@ vect2_t project(vect3_t point)
 
 void update(void)
 {
-
+    int time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks64() - previous_frame_time);
+    if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME)
+    {
+        SDL_Delay(time_to_wait);
+    }
+    previous_frame_time = SDL_GetTicks64();
     cube_rotation.x += 0.001;
     cube_rotation.y += 0.001;
     cube_rotation.z += 0.001;
