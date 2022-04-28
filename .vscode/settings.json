@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "stdio.h": "c",
-        "sdl.h": "c"
+        "sdl.h": "c",
+        "stdint.h": "c",
+        "display.h": "c",
+        "vector.h": "c",
+        "mesh.h": "c"
     }
 }
