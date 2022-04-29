@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #define FPS 30
 #define FRAME_TARGET_TIME 1000 / FPS
@@ -30,5 +31,7 @@ void render_color_buffer(void);
 void clear_color_buffer(uint32_t color);
 
 void destroy_window(void);
+
+void draw_line(int x0, int y0, int x1, int y1, uint32_t color);
 
 #endif

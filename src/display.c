@@ -102,3 +102,23 @@ void destroy_window(void)
     SDL_DestroyRenderer(renderer);
     SDL_Quit();
 }
+
+void draw_line(int x0, int y0, int x1, int y1, uint32_t color)
+{
+    int delta_x = x1 - x0;
+    int delta_y = y1 - y0;
+    float side_length = abs(delta_x) >= abs(delta_y) ? abs(delta_x) : abs(delta_y);
+
+    float inc_x = delta_x / (float)side_length;
+    float inc_y = delta_y / (float)side_length;
+
+    float current_x = x0;
+    float current_y = y0;
+
+    for (int i = 0; i <= side_length; i++)
+    {
+        draw_pixel(round(current_x), round(current_y), color);
+        current_x += inc_x;
+        current_y += inc_y;
+    }
+}

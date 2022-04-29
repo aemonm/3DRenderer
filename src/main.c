@@ -80,8 +80,8 @@ void update(void)
 
             vect2_t projected_point = project(transformed_vertex);
 
-            projected_point.x += (window_width/2);
-            projected_point.y += (window_height/2);
+            projected_point.x += (window_width / 2);
+            projected_point.y += (window_height / 2);
 
             projected_triangle.points[j] = projected_point;
         }
@@ -95,9 +95,17 @@ void render(void)
     for (int i = 0; i < N_MESH_FACES; i++)
     {
         triangle_t triangle = triangles_to_render[i];
-        for(int j = 0; j < 3; j++)
+
+        // render vertices;
+        for (int j = 0; j < 3; j++)
         {
             draw_rect(triangle.points[j].x, triangle.points[j].y, 3, 3, 0xffffff00);
+        }
+        // render lines
+        for (int j = 0; j < 3; j++)
+        {
+            vect2_t next_points = j == 2 ? triangle.points[0] : triangle.points[j + 1];
+            draw_line(triangle.points[j].x, triangle.points[j].y, next_points.x, next_points.y, 0xffffff00);
         }
     }
     render_color_buffer();
