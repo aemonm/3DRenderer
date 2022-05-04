@@ -5,6 +5,8 @@
         "stdint.h": "c",
         "display.h": "c",
         "vector.h": "c",
-        "mesh.h": "c"
+        "mesh.h": "c",
+        "__tuple": "c",
+        "array": "c"
     }
 }
