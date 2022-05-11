@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "mesh.h"
 #include "darray.h"
+#include <string.h>
+#include <stdlib.h>
 
 mesh_t mesh = {
     .faces = NULL,
@@ -48,4 +50,45 @@ void load_cube_mesh_data(void)
     {
         array_push(mesh.faces, cube_faces[i]);
     }
+}
+
+#define OBJ_MAX_LINE_LENGTH 256
+
+void load_obj_file_data(char *filename)
+{
+    FILE *fp;
+
+    fp = fopen(filename, "r");
+
+    char line[512];
+
+    while (fgets(line, 1024, fp))
+    {
+        if (strncmp(line, "v ", 2) == 0)
+        {
+            vect3_t vertex;
+            sscanf(line, "v %f %f %f", &vertex.x, &vertex.y, &vertex.z);
+            array_push(mesh.vertices, vertex);
+        };
+        if (strncmp(line, "f ", 2) == 0)
+        {
+            printf("%s", line);
+            int vertex_indices[3];
+            int texture_indices[3];
+            int normal_indices[3];
+            sscanf(line, "f %d/%d/%d %d/%d/%d %d/%d/%d",
+                   &vertex_indices[0], &texture_indices[0], &normal_indices[0],
+                   &vertex_indices[1], &texture_indices[1], &normal_indices[1],
+                   &vertex_indices[2], &texture_indices[2], &normal_indices[2]);
+
+            face_t face = {
+                .a = vertex_indices[0],
+                .b = vertex_indices[1],
+                .c = vertex_indices[2]};
+
+            array_push(mesh.faces, face);
+        };
+    }
+
+    fclose(fp);
 }
