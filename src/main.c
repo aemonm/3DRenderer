@@ -15,7 +15,7 @@ int previous_frame_time = 0;
 
 int fov_factor = 640;
 
-vect3_t camera_position = {.x = 0, .y = 0, .z = -5};
+vect3_t camera_position = {0, 0, 0};
 
 void setup(void)
 {
@@ -25,7 +25,7 @@ void setup(void)
     color_buffer_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, window_width, window_height);
 
     // load_cube_mesh_data();
-    load_obj_file_data("./assets/f22.obj");
+    load_obj_file_data("./assets/cube.obj");
 }
 
 void process_input(void)
@@ -69,11 +69,14 @@ void update(void)
     for (int i = 0; i < array_length(mesh.faces); i++)
     {
         face_t mesh_face = mesh.faces[i];
+
         vect3_t face_vertices[3];
         face_vertices[0] = mesh.vertices[mesh_face.a - 1];
         face_vertices[1] = mesh.vertices[mesh_face.b - 1];
         face_vertices[2] = mesh.vertices[mesh_face.c - 1];
-        triangle_t projected_triangle;
+
+        vect3_t transformed_vertices[3];
+
         for (int j = 0; j < 3; j++)
         {
             vect3_t transformed_vertex = face_vertices[j];
@@ -81,9 +84,40 @@ void update(void)
             transformed_vertex = vec3_rotate_x(transformed_vertex, mesh.rotation.x);
             transformed_vertex = vec3_rotate_y(transformed_vertex, mesh.rotation.y);
             transformed_vertex = vec3_rotate_z(transformed_vertex, mesh.rotation.z);
-            transformed_vertex.z -= camera_position.z;
+            transformed_vertex.z += 5;
 
-            vect2_t projected_point = project(transformed_vertex);
+            transformed_vertices[j] = transformed_vertex;
+        }
+
+        triangle_t projected_triangle;
+
+        // Check Back face culling
+        vect3_t vec_a = transformed_vertices[0];
+        vect3_t vec_b = transformed_vertices[1];
+        vect3_t vec_c = transformed_vertices[2];
+
+        // Get B-A and C-A vectors
+        vect3_t vec_ab = sub_vect3(vec_b, vec_a);
+        vect3_t vec_ac = sub_vect3(vec_c, vec_a);
+        vec3_normalize(&vec_ab);
+        vec3_normalize(&vec_ac);
+        vect3_t camera_ray = sub_vect3(camera_position, vec_a);
+
+        // Computer normal vector using cross product
+        vect3_t normal = cross_vect3(vec_ab, vec_ac);
+        vec3_normalize(&normal);
+
+        float dot_normal_camera = dot_vect3(normal, camera_ray);
+
+        if (dot_normal_camera < 0)
+        {
+            continue;
+        }
+
+        for (int j = 0; j < 3; j++)
+        {
+
+            vect2_t projected_point = project(transformed_vertices[j]);
 
             projected_point.x += (window_width / 2);
             projected_point.y += (window_height / 2);
@@ -112,7 +146,8 @@ void render(void)
     SDL_RenderPresent(renderer);
 }
 
-void free_resources(void) {
+void free_resources(void)
+{
     array_free(mesh.faces);
     array_free(mesh.vertices);
     free(color_buffer);
