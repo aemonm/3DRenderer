@@ -156,9 +156,9 @@ void render(void)
         // Draw triangle vertex points
         if (render_method == RENDER_WIRE_VERTEX)
         {
-            draw_rect(triangle.points[0].x - 3, triangle.points[0].y - 3, 3, 3, 0xffffff00);
-            draw_rect(triangle.points[1].x - 3, triangle.points[1].y - 3, 3, 3, 0xffffff00);
-            draw_rect(triangle.points[2].x - 3, triangle.points[2].y - 3, 3, 3, 0xffffff00);
+            draw_rect(triangle.points[0].x - 3, triangle.points[0].y - 3, 3, 3, 0xfff00f00);
+            draw_rect(triangle.points[1].x - 3, triangle.points[1].y - 3, 3, 3, 0xfff00f00);
+            draw_rect(triangle.points[2].x - 3, triangle.points[2].y - 3, 3, 3, 0xfff00f00);
         }
         // Draw filled triangle
         if (render_method == RENDER_FILL_TRIANGLE || render_method == RENDER_FILL_TRIANGLE_WIRE)
