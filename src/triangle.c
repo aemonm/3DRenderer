@@ -8,7 +8,7 @@ void int_swap(int *a, int *b)
     *b = tmp;
 }
 
-void fill_flat_bottom_triangle(int x0, int y0, int x1, int y1, int x2, int y2, uint32_t color)
+void fill_flat_bottom_triangle(int x0, int y0, int x1, int y1, int x2, int y2, color_t color)
 {
     // find two (inverse) slopes (triangle's legs)
     float inverse_slope_1 = (float)(x1 - x0) / (y1 - y0);
@@ -25,7 +25,7 @@ void fill_flat_bottom_triangle(int x0, int y0, int x1, int y1, int x2, int y2, u
     }
 }
 
-void fill_flat_top_triangle(int x0, int y0, int x1, int y1, int x2, int y2, uint32_t color)
+void fill_flat_top_triangle(int x0, int y0, int x1, int y1, int x2, int y2, color_t color)
 {
     // find two (inverse) slopes (triangle's legs)
     float inverse_slope_1 = (float)(x2 - x0) / (y2 - y0);

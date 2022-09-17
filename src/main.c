@@ -17,18 +17,44 @@ int fov_factor = 640;
 
 vect3_t camera_position = {0, 0, 0};
 
+void bubble_sort(triangle_t *t)
+{
+    int num_triangles = array_length(t);
+
+    for (int i = 0; i < num_triangles; i++)
+    {
+
+        for (int j = 0; j < num_triangles; j++)
+        {
+            if (t[i].avg_depth < t[j].avg_depth)
+            {
+                triangle_t temp = t[i];
+                t[i] = t[j];
+                t[j] = temp;
+            }
+        }
+        // if (t[i].avg_depth > t[i + 1].avg_depth)
+        // {
+        //     triangle_t temp = t[i];
+        //     t[i] = t[i + 1];
+        //     t[i + 1] = temp;
+        //     bubble_sort(t);
+        // }
+    }
+}
+
 void setup(void)
 {
     render_method = RENDER_WIRE;
     cull_method = CULL_BACKFACE;
 
-    color_buffer = (uint32_t *)malloc(sizeof(uint32_t) * window_width * window_height);
+    color_buffer = (color_t *)malloc(sizeof(color_t) * window_width * window_height);
     if (!color_buffer)
         fprintf(stderr, "Error allocating color buffer\n");
     color_buffer_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, window_width, window_height);
 
-    // load_cube_mesh_data();
-    load_obj_file_data("./assets/cube.obj");
+    load_cube_mesh_data();
+    // load_obj_file_data("./assets/cube.obj");
 }
 
 void process_input(void)
@@ -130,19 +156,30 @@ void update(void)
                 continue;
             }
         }
-        triangle_t projected_triangle;
+        vect2_t projected_points[3];
 
         for (int j = 0; j < 3; j++)
         {
 
-            vect2_t projected_point = project(transformed_vertices[j]);
+            // vect2_t projected_point = project(transformed_vertices[j]);
+            projected_points[j] = project(transformed_vertices[j]);
 
-            projected_point.x += (window_width / 2);
-            projected_point.y += (window_height / 2);
-
-            projected_triangle.points[j] = projected_point;
+            projected_points[j].x += (window_width / 2);
+            projected_points[j].y += (window_height / 2);
         }
+
+        float avg_depth = (float)(transformed_vertices[0].z + transformed_vertices[1].z + transformed_vertices[2].z) / 3.0;
+
+        triangle_t projected_triangle = {
+            .points = {
+                {projected_points[0].x, projected_points[0].y},
+                {projected_points[1].x, projected_points[1].y},
+                {projected_points[2].x, projected_points[2].y}},
+            .color = mesh_face.color,
+            .avg_depth = avg_depth};
+
         array_push(triangles_to_render, projected_triangle);
+        bubble_sort(triangles_to_render);
     }
 }
 
@@ -163,7 +200,7 @@ void render(void)
         // Draw filled triangle
         if (render_method == RENDER_FILL_TRIANGLE || render_method == RENDER_FILL_TRIANGLE_WIRE)
         {
-            draw_filled_triangle(triangle.points[0].x, triangle.points[0].y, triangle.points[1].x, triangle.points[1].y, triangle.points[2].x, triangle.points[2].y, 0xff555555);
+            draw_filled_triangle(triangle.points[0].x, triangle.points[0].y, triangle.points[1].x, triangle.points[1].y, triangle.points[2].x, triangle.points[2].y, triangle.color);
         }
         // Draw triangle wireframe
         if (render_method == RENDER_WIRE || render_method == RENDER_WIRE_VERTEX || render_method == RENDER_FILL_TRIANGLE_WIRE)
