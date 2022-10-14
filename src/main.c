@@ -5,6 +5,7 @@
 #include "display.h"
 #include "vector.h"
 #include "mesh.h"
+#include "matrix.h"
 #include "triangle.h"
 #include "darray.h"
 
@@ -107,6 +108,8 @@ void update(void)
     mesh.rotation.x += 0.001;
     mesh.rotation.y += 0.001;
     mesh.rotation.z += 0.001;
+    mesh.scale.x += 0.002;
+    mat4_t scale_matrix = mat4_make_scale(mesh.scale.x, mesh.scale.y, mesh.scale.z);
 
     for (int i = 0; i < array_length(mesh.faces); i++)
     {
@@ -117,15 +120,14 @@ void update(void)
         face_vertices[1] = mesh.vertices[mesh_face.b - 1];
         face_vertices[2] = mesh.vertices[mesh_face.c - 1];
 
-        vect3_t transformed_vertices[3];
+        vect4_t transformed_vertices[3];
 
         for (int j = 0; j < 3; j++)
         {
-            vect3_t transformed_vertex = face_vertices[j];
+            vect4_t transformed_vertex = vec4_from_vec3(face_vertices[j]);
+            // TODO: implement matrix transform
+            transformed_vertex = mat4_mul_vec(scale_matrix, transformed_vertex);
 
-            transformed_vertex = vec3_rotate_x(transformed_vertex, mesh.rotation.x);
-            transformed_vertex = vec3_rotate_y(transformed_vertex, mesh.rotation.y);
-            transformed_vertex = vec3_rotate_z(transformed_vertex, mesh.rotation.z);
             transformed_vertex.z += 5;
 
             transformed_vertices[j] = transformed_vertex;
@@ -134,9 +136,9 @@ void update(void)
         if (cull_method == CULL_BACKFACE)
         {
             // Check Back face culling
-            vect3_t vec_a = transformed_vertices[0];
-            vect3_t vec_b = transformed_vertices[1];
-            vect3_t vec_c = transformed_vertices[2];
+            vect3_t vec_a = vec3_from_vec4(transformed_vertices[0]);
+            vect3_t vec_b = vec3_from_vec4(transformed_vertices[1]);
+            vect3_t vec_c = vec3_from_vec4(transformed_vertices[2]);
 
             // Get B-A and C-A vectors
             vect3_t vec_ab = sub_vect3(vec_b, vec_a);
@@ -162,7 +164,7 @@ void update(void)
         {
 
             // vect2_t projected_point = project(transformed_vertices[j]);
-            projected_points[j] = project(transformed_vertices[j]);
+            projected_points[j] = project(vec3_from_vec4(transformed_vertices[j]));
 
             projected_points[j].x += (window_width / 2);
             projected_points[j].y += (window_height / 2);

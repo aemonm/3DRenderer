@@ -121,3 +121,21 @@ void vec3_normalize(vect3_t *vec)
     vec->y /= length;
     vec->z /= length;
 }
+
+vect4_t vec4_from_vec3(vect3_t v3)
+{
+    vect4_t v4 = {.x = v3.x,
+                  .y = v3.y,
+                  .z = v3.z,
+                  .w = 1};
+    return v4;
+}
+
+vect3_t vec3_from_vec4(vect4_t v4)
+{
+    vect3_t v3 = {.x = v4.x,
+                  .y = v4.y,
+                  .z = v4.z};
+
+    return v3;
+}
